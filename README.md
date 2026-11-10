@@ -6,19 +6,6 @@ This lab verifies the three wired interfaces on an ESP32: UART (Serial2), I2C (W
 
 The board is an ESP32 with a WROOM module, selected as ESP32-WROOM-DA Module or ESP32 Dev Module in the Arduino IDE. The IDE is Arduino IDE 2.3.10 on Windows. The Serial Monitor runs at 115200 baud unless a test says otherwise.
 
-## Repository layout
-
-```
-lab8/
-├── README.md
-├── WIRING.png
-├── uart_loopback/
-│   └── uart_loopback.ino
-├── i2c_scanner/
-│   └── i2c_scanner.ino
-└── spi_loopback/
-    └── spi_loopback.ino
-```
 
 ## Pin table
 
@@ -33,7 +20,6 @@ lab8/
 | SPI | MISO | 26 | `SPI_MISO` | Jumper to GPIO13 |
 | SPI | CS | 4 | `SPI_CS` | Held HIGH, not jumpered |
 
-None of the chosen pins is a strapping pin (0, 2, 5, 12, 15), a flash pin (6 to 11), or an input-only pin (34 to 39). GPIO16 and GPIO17 are usable because the board has a WROOM module; WROVER boards reserve them for PSRAM.
 
 ## Wiring
 
@@ -46,7 +32,9 @@ None of the chosen pins is a strapping pin (0, 2, 5, 12, 15), a flash pin (6 to 
 | OLED SCL | GPIO22 |
 | GPIO13 (MOSI) | GPIO26 (MISO), SPI loopback jumper |
 
-![Labeled wiring photo](WIRING.png)
+
+<img width="1536" height="2048" alt="WIRING" src="https://github.com/user-attachments/assets/3b4701c7-4f89-4795-a21d-d2f7f9c5a8f2" />
+
 
 The photo shows the ESP32 with the I2C OLED display wired to SDA, SCL, 3V3, and GND.
 
@@ -54,87 +42,47 @@ The photo shows the ESP32 with the I2C OLED display wired to SDA, SCL, 3V3, and 
 
 ### 1. UART with jumper
 
-The jumper connects GPIO17 to GPIO16. The Serial Monitor runs at 115200 baud.
+<img width="1267" height="736" alt="uart_loopback_wired" src="https://github.com/user-attachments/assets/bdefb686-32f7-481f-a7e2-fd82b5defe91" />
 
-```
-PING
-PING
-PING
-```
 
 PING appears once per second.
 
 ### 2. UART without jumper
 
-The jumper is removed. Only the boot messages appear.
+<img width="499" height="271" alt="uart_loopback_not_wired" src="https://github.com/user-attachments/assets/55ca3034-eaf9-46e1-a799-69c35269a323" />
 
-```
-configsip: 0, SPIWP:0xee
-clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
-mode:DIO, clock div:1
-load:0x3fff0030,len:4876
-ho 0 tail 12 room 4
-load:0x40078000,len:16532
-load:0x40080400,len:3500
-entry 0x400805b4
-```
 
 No PING lines follow the boot messages.
 
 ### 3. I2C with module
 
-The OLED display is connected on SDA, SCL, 3V3, and GND.
+<img width="1279" height="750" alt="i2c_scanner_wired" src="https://github.com/user-attachments/assets/5663158b-0d00-4cec-b844-199e4183f9bf" />
 
-```
-Found device at 0x3C
-```
 
 ### 4. I2C without module
 
-The module is disconnected.
+<img width="1279" height="730" alt="i2c_scanner_not_wired" src="https://github.com/user-attachments/assets/3ff62a51-af06-482d-85d2-492f29c091d0" />
 
-```
-No I2C devices found
-```
 
 ### 5. SPI with jumper
 
-The jumper connects GPIO13 (MOSI) to GPIO26 (MISO).
+<img width="628" height="334" alt="spi_loopback_wired" src="https://github.com/user-attachments/assets/6e58dea7-f1e3-4866-ae24-37e88c5ebd21" />
 
-```
-Sent 0xA5, received 0xA5
-Sent 0xA5, received 0xA5
-Sent 0xA5, received 0xA5
-```
 
 ### 6. SPI without jumper
 
-The jumper is removed.
+<img width="482" height="336" alt="spi_loopback_not_wired" src="https://github.com/user-attachments/assets/e740aba6-0dd4-45cf-ad96-0fd0ea0c1824" />
 
-```
-Sent 0xA5, received 0x0
-Sent 0xA5, received 0x0
-Sent 0xA5, received 0x0
-```
 
 ### 7. Sketch at 9600, monitor at 115200
 
-The sketch sends at 9600 baud but the monitor reads at 115200, so the bytes decode as garbage.
+<img width="501" height="233" alt="uart_loopback_sketch" src="https://github.com/user-attachments/assets/0f68ab25-78f4-450c-972f-aab639ecb793" />
 
-```
-<garbled characters, no readable text>
-```
 
 ### 8. Sketch at 9600, monitor at 9600
 
-The sketch and the monitor both run at 9600 baud.
+<img width="504" height="262" alt="uart_loopback_sketch(9600)" src="https://github.com/user-attachments/assets/6892e0f6-3d2b-43ee-b197-bf8d5073545e" />
 
-```
-<one line of garbled boot text>
-PING
-PING
-PING
-```
 
 The garbled first line is the ESP32 boot message, which the ROM always prints at 115200 baud. The PING lines are readable because the sketch and the monitor match.
 
